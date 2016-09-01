@@ -1,14 +1,17 @@
 /**
- *  request-frame - requestAnimationFrame & cancelAnimationFrame polyfill for
- *   optimal cross-browser development.
+ *  request-frame-es2015 - requestAnimationFrame & cancelAnimationFrame polyfill for optimal cross-browser development as a ES2015 module.
  *    Version:  v1.4.3
  *     License:  MIT
- *      Copyright Julien Etienne 2015 All Rights Reserved.
- *        github:  https://github.com/julienetie/request-frame
+ *      Copyright Julien Etienne
+ *        github:  https://github.com/art19/request-frame-es2015
  *‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
  */
-(function (window) {
+'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = requestFrame;
 /**
  * @param  {String} type - request | cancel | native.
  * @return {Function} Timing function.
@@ -17,28 +20,30 @@ function requestFrame(type) {
     // The only vendor prefixes required.
     var vendors = ['moz', 'webkit'],
 
-        // Disassembled timing function abbreviations.
-        aF = 'AnimationFrame',
+
+    // Disassembled timing function abbreviations.
+    aF = 'AnimationFrame',
         rqAF = 'Request' + aF,
 
-        // Final assigned functions.
-        assignedRequestAnimationFrame,
+
+    // Final assigned functions.
+    assignedRequestAnimationFrame,
         assignedCancelAnimationFrame,
 
-        // Initial time of the timing lapse.
-        previousTime = 0,
 
+    // Initial time of the timing lapse.
+    previousTime = 0,
         mozRAF = window.mozRequestAnimationFrame,
         mozCAF = window.mozCancelAnimationFrame,
 
-        // Checks for firefox 4 - 10 function pair mismatch.
-        hasMozMismatch = mozRAF && !mozCAF,
 
+    // Checks for firefox 4 - 10 function pair mismatch.
+    hasMozMismatch = mozRAF && !mozCAF,
         func;
 
     // Date.now polyfill, mainly for legacy IE versions.
     if (!Date.now) {
-        Date.now = function() {
+        Date.now = function () {
             return new Date().getTime();
         };
     }
@@ -54,20 +59,19 @@ function requestFrame(type) {
         var webkitRAF = window.webkitRequestAnimationFrame,
             rAF = window.requestAnimationFrame,
 
-            // CSS/ Device with max for iOS6 Devices.
-            hasMobileDeviceWidth = screen.width <= 768 ? true : false,
 
-            // Only supports webkit prefixed requestAnimtionFrane.
-            requiresWebkitprefix = !(webkitRAF && rAF),
+        // CSS/ Device with max for iOS6 Devices.
+        hasMobileDeviceWidth = screen.width <= 768 ? true : false,
 
-            // iOS6 webkit browsers don't support performance now.
-            hasNoNavigationTiming = window.performance ? false : true,
 
-            iOS6Notice = 'setTimeout is being used as a substitiue for' +
-            'requestAnimationFrame due to a bug within iOS 6 builds',
+        // Only supports webkit prefixed requestAnimtionFrane.
+        requiresWebkitprefix = !(webkitRAF && rAF),
 
-            hasIOS6Bug = requiresWebkitprefix && hasMobileDeviceWidth &&
-            hasNoNavigationTiming;
+
+        // iOS6 webkit browsers don't support performance now.
+        hasNoNavigationTiming = window.performance ? false : true,
+            iOS6Notice = 'setTimeout is being used as a substitiue for' + 'requestAnimationFrame due to a bug within iOS 6 builds',
+            hasIOS6Bug = requiresWebkitprefix && hasMobileDeviceWidth && hasNoNavigationTiming;
 
         function bugCheckresults(timingFnA, timingFnB, notice) {
             if (timingFnA || timingFnB) {
@@ -110,10 +114,9 @@ function requestFrame(type) {
     function setTimeoutWithTimestamp(callback) {
         var immediateTime = Date.now(),
             lapsedTime = Math.max(previousTime + 16, immediateTime);
-        return setTimeout(function() {
-                callback(previousTime = lapsedTime);
-            },
-            lapsedTime - immediateTime);
+        return setTimeout(function () {
+            callback(previousTime = lapsedTime);
+        }, lapsedTime - immediateTime);
     }
 
     /**
@@ -123,11 +126,9 @@ function requestFrame(type) {
      */
     function queryRequestAnimationFrame() {
         if (Array.prototype.filter) {
-            assignedRequestAnimationFrame = window['request' + aF] ||
-                window[vendors.filter(function(vendor) {
-                    if (window[vendor + rqAF] !== undefined)
-                        return vendor;
-                }) + rqAF] || setTimeoutWithTimestamp;
+            assignedRequestAnimationFrame = window['request' + aF] || window[vendors.filter(function (vendor) {
+                if (window[vendor + rqAF] !== undefined) return vendor;
+            }) + rqAF] || setTimeoutWithTimestamp;
         } else {
             return setTimeoutWithTimestamp;
         }
@@ -146,12 +147,10 @@ function requestFrame(type) {
     function queryCancelAnimationFrame() {
         var cancellationNames = [];
         if (Array.prototype.map) {
-            vendors.map(function(vendor) {
-                return ['Cancel', 'CancelRequest'].map(
-                    function(cancellationNamePrefix) {
-                        cancellationNames.push(vendor +
-                            cancellationNamePrefix + aF);
-                    });
+            vendors.map(function (vendor) {
+                return ['Cancel', 'CancelRequest'].map(function (cancellationNamePrefix) {
+                    cancellationNames.push(vendor + cancellationNamePrefix + aF);
+                });
             });
         } else {
             return clearTimeoutWithId;
@@ -175,9 +174,7 @@ function requestFrame(type) {
         }
 
         // Use truthly function
-        assignedCancelAnimationFrame = window['cancel' + aF] ||
-            prefixedCancelAnimationFrame(cancellationNames, 0) ||
-            clearTimeoutWithId;
+        assignedCancelAnimationFrame = window['cancel' + aF] || prefixedCancelAnimationFrame(cancellationNames, 0) || clearTimeoutWithId;
 
         // Check for iOS 6 bug
         if (!hasIOS6RequestAnimationFrameBug()) {
@@ -232,24 +229,3 @@ function requestFrame(type) {
     }
     return func;
 }
-
-
-// Node.js/ CommonJS
-if (typeof module === 'object' && typeof module.exports === 'object') {
-module.exports = exports = requestFrame;
-}
-
-// AMD
-else if (typeof define === 'function' && define.amd) {
-define(function() {
-  return requestFrame;
-});
-}
-
-// Default to window as global
-else if (typeof window === 'object') {
-window.requestFrame = requestFrame;
-}
-/* global -module, -exports, -define */
-
-}((typeof window === "undefined" ? {} : window)));
