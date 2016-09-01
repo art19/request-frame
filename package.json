@@ -2,7 +2,7 @@
   "name": "request-frame-es2015",
   "version": "1.4.3",
   "description": "requestAnimationFrame & cancelAnimationFrame polyfill for optimal cross-browser development as a ES2015 module.",
-  "main": "dist/request-frame.amd.js",
+  "main": "dist/request-frame.commonjs.js",
   "directories": {
     "example": "example",
     "test": "test"
