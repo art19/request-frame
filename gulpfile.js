@@ -5,12 +5,12 @@ var version = '1.4.3',
     header = require('gulp-header'),
     pkg = require('./package.json'),
     bump = require('gulp-bump'),
+    babel = require('gulp-babel'),
     banner = ['/**',
-        ' *  <%= pkg.name %> - requestAnimationFrame & cancelAnimationFrame polyfill for',
-        ' *   optimal cross-browser development.',
+        ' *  <%= pkg.name %> - <%= pkg.description %>',
         ' *    Version:  v<%= pkg.version %>',
         ' *     License:  <%= pkg.license %>',
-        ' *      Copyright <%= pkg.author %> 2015 All Rights Reserved.',
+        ' *      Copyright <%= pkg.author %>',
         ' *        github:  <%= pkg.repository.url %>',
         ' *‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾',
         ' */',
@@ -21,43 +21,55 @@ var version = '1.4.3',
         ' * <%= pkg.name %> - <%= pkg.description %>',
         ' * @version v<%= pkg.version %>',
         ' * @license <%= pkg.license %>',
-        ' * Copyright <%= pkg.author %> 2015 All Rights Reserved.',
+        ' * Copyright <%= pkg.author %>',
         ' */',
         ''
     ].join('\n');
 
 var src = [
-    './src/amd-wrapper-start.js',
-    './src/request-frame.src.js',
-    './src/amd-wrapper-end.js'
+    './src/request-frame.js'
 ];
 
-gulp.task('make-min', function() {
-    return gulp.src(src)
-        .pipe(concat('request-frame.min.js'))
-        .pipe(uglify())
-        .pipe(header(minBanner, {
-            pkg: pkg
-        }))
-        .pipe(gulp.dest('./dist'));
+["amd", "umd", "systemjs", "commonjs"].forEach(function (moduleType) {
+    gulp.task(`make-min-${moduleType}`, function() {
+        return gulp.src(src)
+            .pipe(babel({
+                moduleIds: true,
+                presets: [
+                    ['es2015', { modules: moduleType }]
+                ]
+            }))
+            .pipe(concat(`request-frame.${moduleType}.min.js`))
+            .pipe(uglify())
+            .pipe(header(minBanner, {
+                pkg: pkg
+            }))
+            .pipe(gulp.dest('./dist'));
+    });
+
+    gulp.task(`make-${moduleType}`, function() {
+        return gulp.src(src)
+            .pipe(babel({
+                moduleIds: true,
+                presets: [
+                    ['es2015', { modules: moduleType }]
+                ]
+            }))
+            .pipe(concat(`request-frame.${moduleType}.js`))
+            .pipe(header(banner, {
+                pkg: pkg
+            }))
+            .pipe(gulp.dest('./dist'));
+    });
 });
 
-gulp.task('make', function() {
-    return gulp.src(src)
-        .pipe(concat('request-frame.js'))
-        .pipe(header(banner, {
-            pkg: pkg
-        }))
-        .pipe(gulp.dest('./dist'));
-});
+gulp.task('make-min', ['make-min-amd', 'make-min-umd', 'make-min-systemjs', 'make-min-commonjs']);
+gulp.task('make', ['make-amd', 'make-umd', 'make-systemjs', 'make-commonjs']);
 
 gulp.task('bump', function(){
   gulp.src(['./bower.json','./package.json'])
   .pipe(bump({version: version}))
   .pipe(gulp.dest('./'));
 });
-
-
-
 
 gulp.task('default', ['make-min', 'make', 'bump']);
