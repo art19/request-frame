@@ -1,8 +1,8 @@
 {
-  "name": "request-frame",
+  "name": "request-frame-es2015",
   "version": "1.4.3",
-  "description": "requestAnimationFrame & cancelAnimationFrame polyfill for optimal cross-browser development.",
-  "main": "dist/request-frame.js",
+  "description": "requestAnimationFrame & cancelAnimationFrame polyfill for optimal cross-browser development as a ES2015 module.",
+  "main": "dist/request-frame.commonjs.js",
   "directories": {
     "example": "example",
     "test": "test"
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/julienetie/request-frame"
+    "url": "https://github.com/art19/request-frame-es2015"
   },
   "keywords": [
     "requestAnimationFrame",
@@ -31,15 +31,20 @@
     "animation timestamp"
   ],
   "author": "Julien Etienne",
+  "contributors": [
+    "Keith Gable <keith@art19.com>"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/julienetie/request-frame/issues"
+    "url": "https://github.com/art19/request-frame-es2015/issues"
   },
-  "homepage": "https://github.com/julienetie/request-frame",
+  "homepage": "https://github.com/art19/request-frame-es2015",
   "devDependencies": {
+    "babel-preset-es2015": "*",
     "chai": "*",
     "gulp": "*",
     "gulp-bump": "*",
+    "gulp-babel": "*",
     "gulp-concat": "*",
     "gulp-header": "*",
     "gulp-rename": "*",

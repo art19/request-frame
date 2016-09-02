@@ -7,21 +7,11 @@
 - **iOS 6 bug fix** without user-agent sniffing.
 - **Firefox 4 - 10 function mismatch normalization**.
 - Doesn't modify native functions unless specified.
-- AMD compliant.
 
-### Get request-frame:
+### Get request-frame-es2015:
 
-#### via npm
-```
-npm i request-frame --save
-```
-#### via bower
-```
-bower i request-frame
-```
-#### [src](https://github.com/julienetie/request-frame/tree/master/dist)
-```
-<script src="request-frame.min.js"></script>
+Add `"request-frame-es2015": "art19/request-frame-es2015"` to package.json or bower.json.
+
 ```
 ### The API:
 #### Assign the timing functions:
